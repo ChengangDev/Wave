@@ -22,3 +22,4 @@ if __name__ == '__main__':
     #print(ts.get_deposit_rate().head(10))
     #print(ts.get_loan_rate().head(10))
     print(ts.get_latest_news(top=5,show_content=True))
+    
