@@ -1,27 +1,26 @@
 import tushare as ts
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 import wave
 
 if __name__ == '__main__':
-    df = ts.get_hist_data('600848')
-    #df = ts.get_realtime_quotes('600000')
+    df = wave.get_wave_data('601928', '2015-06-26')
     
-    print('hello')
-    #print(df[['code', 'name', 'price']])
-    
-    #df = ts.get_index()
-    print(df)
-    
-    #df = ts.profit_data(top=60)
-    #df.sort('shares', ascending=False)
+    #df = pd.DataFrame(np.random.randn(1000, 4), index=pd.date_range('1/1/2000', periods=1000),columns=['A', 'B', 'C', 'D'])
+    #df = df.cumsum()
     #print(df)
-    
-    #print(ts.xsg_data())
-    
-    #print(ts.fund_holdings(2014,4))
-    #print(ts.broker_tops())
-    #print(ts.inst_detail())
-    #print(ts.get_deposit_rate().head(10))
-    #print(ts.get_loan_rate().head(10))
-    #print(ts.get_latest_news(top=5,show_content=True))
-    
-    wave.draw()
+    df = df.sort(columns='time', ascending=True)
+#     df_wratio = df.loc[:, ['wratio']]
+#     df_wprice = df.loc[:, ['wprice']]
+#     df_wtrend = df.loc[:, ['wtrend']]
+#     df_wtrendc = df.loc[:, ['wtrendc']]
+    df_ = df.loc[:, ['wtrendc', 'bstrend']]
+    df_rp = df.loc[:, ['wratio', 'wprice']]
+    plt.figure(); 
+    #df_wratio.plot(); df_wprice.plot();df_wtrend.plot();df_wtrendc.plot(); 
+    df_.plot()
+    df_rp.plot()
+    plt.legend(loc='best')
+    plt.show()
+    #wave.draw()
