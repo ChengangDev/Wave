@@ -2,7 +2,6 @@
 from __future__ import print_function
 import numpy as np
 import pandas as pd
-from numpy import cumsum
 
 
 def calc_wave_ratio(pre_price, open, high, low):
@@ -12,7 +11,7 @@ def calc_wave_ratio(pre_price, open, high, low):
         raise ValueError("low {0} must not greater than open {1}".format(low, open))
     max_ratio = (high-open)/pre_price
     min_ratio = (low-open)/pre_price
-    return {"max_ratio":max_ratio, "min_ratio":min_ratio}
+    return {"max_ratio" : max_ratio, "min_ratio" : min_ratio}
 
 
 def calc_ratio_table_index_and_columns(max_ratio=0.03, min_ratio=-0.03, gap=0.0001):
@@ -31,7 +30,7 @@ def calc_ratio_table_index_and_columns(max_ratio=0.03, min_ratio=-0.03, gap=0.00
     columns_float = np.arange(start=0.0, stop=max_ratio, step=gap)
     columns = ["%.4f" % i for i in columns_float]
 
-    return {"index":index, "columns":columns}
+    return {"index" : index, "columns" : columns}
 
 
 def calc_ratio_table(wave_ratio_df, index, columns):
@@ -48,9 +47,9 @@ def calc_ratio_table(wave_ratio_df, index, columns):
     return table
 
 
-def calc_length_ratio(wave_ratio_df, total):
-    index = wave_ratio_df.index
-    columns = wave_ratio_df.columns
+def calc_length_ratio(ratio_df, total):
+    index = ratio_df.index
+    columns = ratio_df.columns
     df = pd.DataFrame(columns=["count", "ratio"])
     loops = len(index) + len(columns) - 1
 
@@ -59,19 +58,20 @@ def calc_length_ratio(wave_ratio_df, total):
         idx_end = min(len(index)-1, l)
         col_start = max(0, l-len(index)+1)
         col_end = min(len(columns)-1, l)
-        #print("l:", l, "idx:", idx_start, idx_end, "col:", col_start, col_end)
+        # print("l:", l, "idx:", idx_start, idx_end, "col:", col_start, col_end)
         count = 0.0
         length = 0.0
         for idx in range(idx_start, idx_end+1):
             col = l - idx
             if col >= col_start and col <= col_end:
                 length = float(index[idx]) + float(columns[col])
-                if count < wave_ratio_df.iat[idx, col]:
-                    count = wave_ratio_df.iat[idx, col]
+                if count < ratio_df.iat[idx, col]:
+                    count = ratio_df.iat[idx, col]
 
         df.loc["%.4f" % length] = [count, float(count)/float(total)]
 
     return df
 
 
-
+if __name__ == "__main__":
+    print("Hello Wave")

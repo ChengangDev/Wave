@@ -4,7 +4,6 @@ import wave as wv
 import pandas as pd
 
 
-
 class TestWave(unittest.TestCase):
 
     def test_calc_wave_ratio(self):
@@ -25,7 +24,6 @@ class TestWave(unittest.TestCase):
             except ZeroDivisionError as zde:
                 print(zde.message, "Test ZeroDivisionError OK!")
 
-
     wave_ratio_df = pd.DataFrame(
                 [
                     {"max_ratio":0.0001, "min_ratio":-0.0001},
@@ -34,6 +32,7 @@ class TestWave(unittest.TestCase):
                     {"max_ratio":0.0150, "min_ratio":-0.0150},
                 ]
         )
+
     def test_calc_ratio_table_index_and_columns(self):
         dict = wv.calc_ratio_table_index_and_columns(max_ratio=0.02, min_ratio=-0.018)
         index, columns = dict["index"], dict["columns"]
@@ -49,11 +48,11 @@ class TestWave(unittest.TestCase):
         self.assertEqual(df["0.0002"]["0.0003"], 2)
         self.assertEqual(df["0.0140"]["0.0140"], 1)
         self.assertEqual(df["0.0190"]["0.0160"], 0)
-        #print(df)
+        # print(df)
         df.to_csv("/home/chengang/Data/df.csv")
 
         table = wv.calc_length_ratio(df, 4)
-        #self.assertEqual(table)
+        # self.assertEqual(table)
 
 
 if __name__ == "__main__":
