@@ -8,6 +8,7 @@ import threading
 import multiprocessing
 import Queue
 import time
+import os
 
 # for multithread
 queue_lock = threading.Lock()
@@ -59,7 +60,16 @@ class ExportProcess(multiprocessing.Process):
         while not self.q.empty():
             code = self.q.get()
             print("    Process {0} exports {1} from {2} to {3}".format(self.name, code, self.st, self.ed))
-            export_ratio_table(code, self.st, self.ed, self.name)
+            tries = 0
+            while True:
+                try:
+                    export_ratio_table(code, self.st, self.ed, self.name)
+                    break
+                except Exception as e:
+                    tries += 1
+                    print("    Process {0} exception: {1}, try again for {2} times".format(self.name, e.message, tries))
+                    time.sleep(1)
+                    continue
 
         print("Exit process {0}".format(self.name))
 
@@ -73,7 +83,7 @@ def export_ratio_table(code, start, end, thread_id):
     st = time.time()
     df = mkt.MktEqud(ticker=code, beginDate=start, endDate=end,
                      field='ticker,tradeDate,preClosePrice,openPrice,highestPrice,lowestPrice,closePrice')
-    print("      Thread {0} fetch online: {1}".format(thread_id, time.time()-st))
+    print("        Thread {0} fetch online: {1}".format(thread_id, time.time()-st))
     # queue_lock.release()
     # df = ts.get_h_data(code, start, end)
     # print(df)
@@ -88,11 +98,11 @@ def export_ratio_table(code, start, end, thread_id):
     idx_col = wv.calc_ratio_table_index_and_columns(max_ratio=0.03, min_ratio=-0.03)
     index, columns = idx_col["index"], idx_col["columns"]
     ratio_table = wv.calc_ratio_table(wave_ratio_df, index, columns)
-    print("      Thread {0} calc ratio table: {1}".format(thread_id, time.time()-st))
+    print("        Thread {0} calc ratio table: {1}".format(thread_id, time.time()-st))
 
     st = time.time()
     length_ratio_df = wv.calc_length_ratio(ratio_table, len(wave_ratio_df.index))
-    print("      Thread {0} calc length ratio: {1}".format(thread_id, time.time()-st))
+    print("        Thread {0} calc length ratio: {1}".format(thread_id, time.time()-st))
 
     # write csv
     st = time.time()
@@ -109,14 +119,11 @@ if __name__ == "__main__":
     df = eq.Equ(equTypeCD='A', listStatusCD='L', field='ticker')
     df['ticker'] = df['ticker'].map(lambda x: str(x).zfill(6))
     start, end = '20150901', '20160326'
-    bFound = False
     # thread can not make full use of cpu
-    code_list = []
     for i, row in df.iterrows():
-        if row['ticker'] == '002449':
-            bFound = True
-        if not bFound :
-            print("{0}/{1}".format(i, len(df.index)))
+        csv = cfg.get_ratio_table_path(row['ticker'], start, end)
+        if os.path.exists(csv):
+            print("{0}/{1} {2} exists.".format(i, len(df.index), row['ticker']))
             continue
         # code_queue.put(row['ticker'])
         # code_list.append(str(row['ticker']))

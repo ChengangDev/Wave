@@ -51,6 +51,8 @@ def calc_length_ratio(ratio_df, total):
     index = ratio_df.index
     columns = ratio_df.columns
     df = pd.DataFrame(columns=["count", "ratio"])
+    if total <= 0:
+        return df
     loops = len(index) + len(columns) - 1
 
     for l in range(loops):
