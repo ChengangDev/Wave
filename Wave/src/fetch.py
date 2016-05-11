@@ -113,7 +113,7 @@ def export_ratio_table(code, start, end, thread_id):
     return length_ratio_df
 
 
-if __name__ == "__main__":
+def fetch_():
     ts.set_token(cfg.get_datayes_key())
     eq = ts.Equity()
     df = eq.Equ(equTypeCD='A', listStatusCD='L', field='ticker')
@@ -152,3 +152,12 @@ if __name__ == "__main__":
         p.join()
 
     print("Exit main")
+
+
+def get_index():
+    df = ts.get_tick_data('000001', '2016-05-05')
+    print(df)
+
+
+if __name__ == "__main__":
+    get_index()

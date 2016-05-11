@@ -75,5 +75,16 @@ def calc_length_ratio(ratio_df, total):
     return df
 
 
+def calc_minute_position(df, min_point, max_point, start_minute = ''):
+    if min_point > max_point:
+        raise ValueError("min is larger than max")
+
+    position_df = pd.DataFrame(columns=['minute', 'min_position', 'max_position'])
+    fly_point = max_point - min_point
+    min_in_minute = max_point
+    max_in_minute = min_point
+    for i, row in df.iterrows():
+        cur_minute = df['time']
+
 if __name__ == "__main__":
     print("Hello Wave")
